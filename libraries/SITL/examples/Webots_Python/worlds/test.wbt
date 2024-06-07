@@ -1,0 +1,64 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+
+WorldInfo {
+  basicTimeStep 16
+}
+Viewpoint {
+  orientation 0.1343386461753942 0.307799009084587 -0.9419197939051438 0.7995897799337226
+  position -3.8855219414918274 3.543048661369182 2.122195128986038
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+DEF robot Robot {
+  translation 0 0.3 0.43
+  children [
+    Camera {
+      rotation 0 1 0 1.5707
+      fieldOfView 1.570796
+      width 640
+      height 480
+      near 0.2
+      far 10
+    }
+  ]
+  controller "test_controller"
+}
+DEF CHESSBOARD Solid {
+  translation 0.392482 0.52591 0.13164
+  rotation 0.7928034715842045 0.6094773625361234 -2.100231249282979e-07 6.69412e-06
+  children [
+    Shape {
+      appearance Appearance {
+        texture ImageTexture {
+          url [
+            "textures/chessboard.jpeg"
+          ]
+        }
+      }
+      geometry Plane {
+        size 0.256 0.256
+      }
+    }
+  ]
+}
+DEF board Solid {
+  translation 0.38 0.5 0
+  children [
+    Shape {
+      appearance Appearance {
+        texture ImageTexture {
+          url [
+            "textures/red.png"
+          ]
+        }
+      }
+      geometry Plane {
+      }
+    }
+  ]
+}

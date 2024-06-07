@@ -1,0 +1,39 @@
+FRAME_CLASS      1          # Multirotor
+FRAME_TYPE       1          # X class
+
+ATC_ANG_PIT_P    0.5
+ATC_ANG_RLL_P    0.5
+ATC_ANG_YAW_P    0.5
+
+ATC_RAT_PIT_P    0.05
+ATC_RAT_RLL_P    0.05
+ATC_RAT_YAW_P    0.02 
+
+ATC_RAT_PIT_I    0
+ATC_RAT_RLL_I    0
+
+ATC_RAT_PIT_D    0.0003
+ATC_RAT_RLL_D    0.0003  
+ATC_RAT_YAW_D    0.000001
+
+AHRS_EKF_TYPE    10         # Use sim AHRS
+ARMING_CHECK	 1045534    # No RC requirements
+MOT_THST_EXPO    0          # No motor exponential
+SCHED_LOOP_RATE  300        
+INS_GYR_CAL      0
+
+PLND_ENABLED     1
+PLND_TYPE        1
+PLND_LAND_OFS_X  -5
+PLND_LAND_OFS_Y  0
+PLND_EST_TYPE    0
+PLND_CAM_POS_X   0.2
+PLND_XY_DIST_MAX 0.02
+PLND_STRICT      1
+PLND_RET_MAX     4
+PLND_TIMEOUT     5
+PLND_RET_BEHAVE  1
+PLND_ALT_MIN     0
+PLND_ALT_MAX     0
+PLND_ORIENT      25
+PLND_OPTIONS     1

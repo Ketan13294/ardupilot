@@ -1,0 +1,118 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/road/protos/StraightRoadSegment.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/floors/protos/Floor.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/appearances/protos/Grass.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/tables/protos/Table.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/obstacles/protos/OilBarrel.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/animals/protos/Dog.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/factory/forklift/protos/Forklift.proto"
+EXTERNPROTO "../protos/Iris.proto"
+EXTERNPROTO "../protos/ArucoMarker.proto"
+
+WorldInfo {
+  title "Iris Ardupilot"
+  basicTimeStep 2
+  FPS 20
+}
+Viewpoint {
+  orientation -0.2834949423567016 -0.2573006243412166 0.9238111313313944 4.213710304812701
+  position 2.9914588660256323 6.2429547227716125 4.055277823149071
+  follow "Iris"
+  followSmoothness 0.01
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Floor {
+  size 300 100
+  appearance Grass {
+  }
+}
+StraightRoadSegment {
+  translation -15 0.3 0.02
+  rotation 0 0 1 0.105
+  width 16.5
+  rightBorder FALSE
+  leftBorder FALSE
+  length 140
+}
+Forklift {
+  translation 9 2.56008 0.81
+  rotation 0 0 1 -2.3561953071795863
+  enablePhysics FALSE
+}
+Dog {
+  translation 5.97592 3.52 1.77636e-15
+  rotation 0 0 1 -2.6179953071795863
+  scale 5
+  name "bentley"
+}
+OilBarrel {
+  translation 12 1.5 0.44
+}
+Table {
+  translation 0 0.92 0
+}
+Iris {
+  translation 0.06108168321791691 1.4455727822959734 0.7949632124999998
+  rotation -6.614403581331377e-16 1.197096616189736e-15 1 0.005794964945465173
+  controller "ardupilot_vehicle_controller"
+  controllerArgs [
+    "--motors"
+    "m1_motor, m2_motor, m3_motor, m4_motor"
+    "--camera"
+    "camera"
+    "--camera-port"
+    "5599"
+    "--rangefinder"
+    "range-finder"
+    "--rangefinder-port"
+    "5598"
+  ]
+  extensionSlot [
+    Camera {
+      translation 0.2 0 0
+      rotation 0 1 0 1.5707
+      fieldOfView 1.570796
+      width 640
+      height 480
+      near 0.2
+      far 10
+    }
+    RangeFinder {
+      translation 0.1 0 0
+      width 1024
+      height 768
+      maxRange 10
+    }
+  ]
+}
+ArucoMarker {
+  translation 0.03 1.12 0.75
+  rotation 0 1 0 0
+  name "aruco 9"
+  size 0.5
+  markerId "9"
+}
+DEF CHESSBOARD Solid {
+  translation 1.35 1.25 0.05
+  rotation 1 0 0 0
+  children [
+    Shape {
+      appearance Appearance {
+        texture ImageTexture {
+          url [
+            "textures/chessboard.jpg"
+          ]
+        }
+      }
+      geometry Plane {
+        size 0.5 0.5
+      }
+    }
+  ]
+}
