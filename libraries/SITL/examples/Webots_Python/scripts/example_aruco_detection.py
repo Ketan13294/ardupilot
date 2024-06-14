@@ -49,7 +49,6 @@ while True:
     if len(corners) > 0:
         # flatten the ArUco IDs list
         ids = ids.flatten()
-
         # loop over the detected ArUCo corners
         for (markerCorner, markerID) in zip(corners, ids):
             # extract the marker corners (which are always returned in

@@ -95,8 +95,8 @@ ArucoMarker {
   translation 0.03 1.12 0.75
   rotation 0 1 0 0
   name "aruco 9"
-  size 0.5
-  markerId "9"
+  size 0.2
+  markerId "1"
 }
 DEF CHESSBOARD Solid {
   translation 1.35 1.25 0.05
