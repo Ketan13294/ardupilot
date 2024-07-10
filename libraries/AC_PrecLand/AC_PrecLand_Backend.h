@@ -7,6 +7,7 @@
 #include "AC_PrecLand.h"
 #include <AP_Math/AP_Math.h>
 #include <AC_PID/AC_PID.h>
+#include <stdio.h>
 
 
 class AC_PrecLand_Backend

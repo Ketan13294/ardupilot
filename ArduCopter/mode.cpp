@@ -746,6 +746,7 @@ void Mode::land_run_horizontal_control()
     copter.ap.prec_land_active = false;
 #if AC_PRECLAND_ENABLED
     copter.ap.prec_land_active = !copter.ap.land_repo_active && copter.precland.target_acquired();
+    printf("land reposition active: %d, target acquired %d\n",!copter.ap.land_repo_active,copter.precland.target_acquired());
     // run precision landing
     if (copter.ap.prec_land_active) {
         Vector2f target_pos, target_vel;
@@ -757,6 +758,8 @@ void Mode::land_run_horizontal_control()
 
         Vector2f zero;
         Vector2p landing_pos = target_pos.topostype();
+        printf("target position: %f %f, target velocity: %f %f\n",landing_pos.x,landing_pos.y,target_vel.x,target_vel.y);
+
         // target vel will remain zero if landing target is stationary
         pos_control->input_pos_vel_accel_xy(landing_pos, target_vel, zero);
     }
@@ -810,6 +813,7 @@ void Mode::land_run_normal_or_precland(bool pause_descent)
         // prec land is enabled and we have not paused descent
         // the state machine takes care of the entire prec landing procedure
         precland_run();
+        
     }
 #else
     land_run_horiz_and_vert_control(pause_descent);

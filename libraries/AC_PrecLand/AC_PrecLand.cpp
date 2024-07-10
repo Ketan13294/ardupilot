@@ -188,7 +188,7 @@ const AP_Param::GroupInfo AC_PrecLand::var_info[] = {
     // @Values: 0:Forward, 4:Back, 25:Down
     // @User: Advanced
     // @RebootRequired: True
-    AP_GROUPINFO_FRAME("ORIENT", 18, AC_PrecLand, _orient, AC_PRECLAND_ORIENT_DEFAULT, AP_PARAM_FRAME_ROVER),
+    AP_GROUPINFO_FRAME("ORIENT", 25, AC_PrecLand, _orient, AC_PRECLAND_ORIENT_DEFAULT, AP_PARAM_FRAME_COPTER),
 
     AP_GROUPEND
 };
@@ -266,6 +266,7 @@ void AC_PrecLand::init(uint16_t update_rate_hz)
 
     // init backend
     if (_backend != nullptr) {
+
         _backend->init();
     }
 
@@ -304,6 +305,7 @@ void AC_PrecLand::update(float rangefinder_alt_cm, bool rangefinder_alt_valid)
     // update estimator of target position
     if (_backend != nullptr && _enabled) {
         _backend->update();
+        printf("Update Curr Loc: %f\n",rangefinder_alt_m);
         run_estimator(rangefinder_alt_m, rangefinder_alt_valid);
     }
 
@@ -505,6 +507,7 @@ void AC_PrecLand::run_estimator(float rangefinder_alt_m, bool rangefinder_alt_va
             }
 
             // Predict
+            printf("Target Acquired Inside Estimator Raw: %d\n",target_acquired());
             if (target_acquired()) {
                 _target_pos_rel_est_NE.x -= _inertial_data_delayed->inertialNavVelocity.x * _inertial_data_delayed->dt;
                 _target_pos_rel_est_NE.y -= _inertial_data_delayed->inertialNavVelocity.y * _inertial_data_delayed->dt;
@@ -514,6 +517,7 @@ void AC_PrecLand::run_estimator(float rangefinder_alt_m, bool rangefinder_alt_va
 
             // Update if a new Line-Of-Sight measurement is available
             if (construct_pos_meas_using_rangefinder(rangefinder_alt_m, rangefinder_alt_valid)) {
+
                 if (!_estimator_initialized) {
                     GCS_SEND_TEXT(MAV_SEVERITY_INFO, "PrecLand: Target Found");
                     _estimator_initialized = true;
@@ -616,6 +620,7 @@ void AC_PrecLand::check_ekf_init_timeout()
 bool AC_PrecLand::retrieve_los_meas(Vector3f& target_vec_unit_body)
 {
     const uint32_t los_meas_time_ms = _backend->los_meas_time_ms();
+    printf("retrieveLos Meas: curr %d last %d get los %d*\n",los_meas_time_ms,_last_backend_los_meas_ms,_backend->get_los_body(target_vec_unit_body));
     if (los_meas_time_ms != _last_backend_los_meas_ms && _backend->get_los_body(target_vec_unit_body)) {
         _last_backend_los_meas_ms = los_meas_time_ms;
         if (!is_zero(_yaw_align)) {
@@ -644,6 +649,7 @@ bool AC_PrecLand::retrieve_los_meas(Vector3f& target_vec_unit_body)
 
 bool AC_PrecLand::construct_pos_meas_using_rangefinder(float rangefinder_alt_m, bool rangefinder_alt_valid)
 {
+    printf("constrRngfinder alt: %f\n",rangefinder_alt_m);
     Vector3f target_vec_unit_body;
     if (retrieve_los_meas(target_vec_unit_body)) {
         _inertial_data_delayed = (*_inertial_history)[0];
@@ -652,6 +658,7 @@ bool AC_PrecLand::construct_pos_meas_using_rangefinder(float rangefinder_alt_m, 
         const Vector3f target_vec_unit_ned = _inertial_data_delayed->Tbn * target_vec_unit_body;
         const Vector3f approach_vector_NED = _inertial_data_delayed->Tbn * _approach_vector_body;
         const bool alt_valid = (rangefinder_alt_valid && rangefinder_alt_m > 0.0f) || (_backend->distance_to_target() > 0.0f);
+        printf("target_valid: %d, alt valid: %d\n",target_vec_valid,alt_valid);
         if (target_vec_valid && alt_valid) {
             // distance to target and distance to target along approach vector
             float dist_to_target, dist_to_target_along_av;
@@ -686,6 +693,7 @@ bool AC_PrecLand::construct_pos_meas_using_rangefinder(float rangefinder_alt_m, 
                 _last_target_pos_rel_origin_NED.z = pos_NED.z;
                 _last_vehicle_pos_NED = pos_NED;
             }
+            printf("Target Validity\n");
             return true;
         }
     }

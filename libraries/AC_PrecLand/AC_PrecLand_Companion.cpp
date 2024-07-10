@@ -16,7 +16,8 @@ void AC_PrecLand_Companion::init()
 // retrieve updates from sensor
 void AC_PrecLand_Companion::update()
 {
-    _have_los_meas = _have_los_meas && AP_HAL::millis()-_los_meas_time_ms <= 1000;
+    _have_los_meas = _have_los_meas; // && AP_HAL::millis()-_los_meas_time_ms <= 1000;
+    // printf("AP_HAL::millis : %d los_meas_time_ms : %d, difference : %d, have_los_meas: %d\n",AP_HAL::millis(),_los_meas_time_ms,AP_HAL::millis()-_los_meas_time_ms,_have_los_meas);
 }
 
 void AC_PrecLand_Companion::handle_msg(const mavlink_landing_target_t &packet, uint32_t timestamp_ms)
@@ -45,8 +46,10 @@ void AC_PrecLand_Companion::handle_msg(const mavlink_landing_target_t &packet, u
         _los_meas_body = Vector3f(-tanf(packet.angle_y), tanf(packet.angle_x), 1.0f);
         _los_meas_body /= _los_meas_body.length();
     }
+    printf("los_meas_body %f %f\n",_los_meas_body.x,_los_meas_body.y);
 
     _los_meas_time_ms = timestamp_ms;
+    //_los_meas_time_ms = AP_HAL::millis();
     _have_los_meas = true;
 }
 

@@ -86,7 +86,6 @@ void ModeLand::gps_run()
         if (land_pause && millis()-land_start_time >= LAND_WITH_DELAY_MS) {
             land_pause = false;
         }
-
         // run normal landing or precision landing (if enabled)
         land_run_normal_or_precland(land_pause);
     }

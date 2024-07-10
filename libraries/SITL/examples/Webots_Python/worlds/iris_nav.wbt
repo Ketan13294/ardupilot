@@ -9,8 +9,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/obstacles/protos/OilBarrel.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/animals/protos/Dog.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/factory/forklift/protos/Forklift.proto"
-EXTERNPROTO "../protos/Iris.proto"
 EXTERNPROTO "../protos/ArucoMarker.proto"
+EXTERNPROTO "../protos/Iris.proto"
 
 WorldInfo {
   title "Iris Ardupilot"
@@ -18,8 +18,8 @@ WorldInfo {
   FPS 20
 }
 Viewpoint {
-  orientation -0.2834949423567016 -0.2573006243412166 0.9238111313313944 4.213710304812701
-  position 2.9914588660256323 6.2429547227716125 4.055277823149071
+  orientation 0.06088191841714614 0.050235856561477915 0.9968800081882384 4.781166705578998
+  position 0.03592620839360319 8.80431430972218 1.2959731483940984
   follow "Iris"
   followSmoothness 0.01
 }
@@ -48,7 +48,6 @@ Forklift {
 Dog {
   translation 5.97592 3.52 1.77636e-15
   rotation 0 0 1 -2.6179953071795863
-  scale 5
   name "bentley"
 }
 OilBarrel {
@@ -56,10 +55,19 @@ OilBarrel {
 }
 Table {
   translation 0 0.92 0
+  rotation 0 0 1 -5.307179586466759e-06
+}
+ArucoMarker {
+  translation 0.11 0.9 0.75
+  rotation 0 1 0 0
+  name "aruco 0"
+  size 0.5
 }
 Iris {
-  translation 0.06108168321791691 1.4455727822959734 0.7949632124999998
-  rotation -6.614403581331377e-16 1.197096616189736e-15 1 0.005794964945465173
+  hidden linearVelocity_0 6.556477678452873e-19 8.665595763754807e-19 1.7659239341937788e-14
+  hidden angularVelocity_0 -2.5429733923819658e-17 8.869777482749633e-18 -2.92096898178201e-19
+  translation -0.14485132835010842 0.8882254619760526 0.7949632124999998
+  rotation -6.358205005733785e-16 4.748704336793275e-16 1 0.011060830176190911
   controller "ardupilot_vehicle_controller"
   controllerArgs [
     "--motors"
@@ -77,42 +85,17 @@ Iris {
     Camera {
       translation 0.2 0 0
       rotation 0 1 0 1.5707
-      fieldOfView 1.570796
+      fieldOfView 1.085
       width 640
       height 480
-      near 0.2
-      far 10
     }
     RangeFinder {
-      translation 0.1 0 0
-      width 1024
-      height 768
+      translation 0.2 0 0
+      rotation 0 -1 0 0
+      width 640
+      height 480
+      minRange 0.1
       maxRange 10
-    }
-  ]
-}
-ArucoMarker {
-  translation 0.03 1.12 0.75
-  rotation 0 1 0 0
-  name "aruco 9"
-  size 0.2
-  markerId "1"
-}
-DEF CHESSBOARD Solid {
-  translation 1.35 1.25 0.05
-  rotation 1 0 0 0
-  children [
-    Shape {
-      appearance Appearance {
-        texture ImageTexture {
-          url [
-            "textures/chessboard.jpg"
-          ]
-        }
-      }
-      geometry Plane {
-        size 0.5 0.5
-      }
     }
   ]
 }
