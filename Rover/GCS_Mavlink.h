@@ -29,8 +29,6 @@ protected:
 
     void send_position_target_global_int() override;
 
-    bool persist_streamrates() const override { return true; }
-
     uint64_t capabilities() const override;
 
     void send_nav_controller_output() const override;
@@ -39,6 +37,10 @@ protected:
 #if HAL_LOGGING_ENABLED
     uint32_t log_radio_bit() const override { return MASK_LOG_PM; }
 #endif
+
+    // Send the mode with the given index (not mode number!) return the total number of modes
+    // Index starts at 1
+    uint8_t send_available_mode(uint8_t index) const override;
 
 private:
 
@@ -64,6 +66,13 @@ private:
 
 #if AP_RANGEFINDER_ENABLED
     void send_rangefinder() const override;
+
+    // send WATER_DEPTH - metres and temperature
+    void send_water_depth();
+    // state variable for the last rangefinder we sent a WATER_DEPTH
+    // message for.  We cycle through the rangefinder backends to
+    // limit the amount of telemetry bandwidth we consume.
+    uint8_t last_WATER_DEPTH_index;
 #endif
 
 #if HAL_HIGH_LATENCY2_ENABLED

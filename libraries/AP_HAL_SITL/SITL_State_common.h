@@ -9,7 +9,7 @@
 #define SITL_SERVO_PORT 20722
 
 #include <AP_HAL/utility/Socket_native.h>
-#include <SITL/SIM_Gimbal.h>
+#include <SITL/SIM_SoloGimbal.h>
 #include <SITL/SIM_ADSB.h>
 #include <SITL/SIM_ADSB_Sagetech_MXS.h>
 #include <SITL/SIM_EFI_Hirth.h>
@@ -104,11 +104,11 @@ public:
     bool new_rc_input;
     uint16_t pwm_output[SITL_NUM_CHANNELS];
     bool output_ready = false;
-    
-#if HAL_SIM_GIMBAL_ENABLED
+
+#if AP_SIM_SOLOGIMBAL_ENABLED
     // simulated gimbal
     bool enable_gimbal;
-    SITL::Gimbal *gimbal;
+    SITL::SoloGimbal *gimbal;
 #endif
 
 #if HAL_SIM_ADSB_ENABLED
@@ -231,7 +231,7 @@ public:
     const char *defaults_path = HAL_PARAM_DEFAULTS_PATH;
 
     // simulated GPS devices
-    SITL::GPS *gps[2];  // constrained by # of parameter sets
+    SITL::GPS *gps[AP_SIM_MAX_GPS_SENSORS];  // constrained by # of parameter sets
 
     // Simulated ELRS radio
     SITL::ELRS *elrs;

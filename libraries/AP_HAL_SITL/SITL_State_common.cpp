@@ -304,13 +304,9 @@ SITL::SerialDevice *SITL_State_Common::create_serial_sim(const char *name, const
         return ais;
 #endif
     } else if (strncmp(name, "gps", 3) == 0) {
-        const char *p = strchr(name, ':');
-        if (p == nullptr) {
-            AP_HAL::panic("Need a GPS number (e.g. sim:gps:1)");
-        }
-        uint8_t x = atoi(p+1);
+        uint8_t x = atoi(arg);
         if (x <= 0 || x > ARRAY_SIZE(gps)) {
-            AP_HAL::panic("Bad GPS number %u", x);
+            AP_HAL::panic("Bad GPS number %u (%s)", x, arg);
         }
         gps[x-1] = NEW_NOTHROW SITL::GPS(x-1);
         return gps[x-1];
@@ -332,9 +328,9 @@ SITL::SerialDevice *SITL_State_Common::create_serial_sim(const char *name, const
  */
 void SITL_State_Common::sim_update(void)
 {
-#if HAL_SIM_GIMBAL_ENABLED
+#if AP_SIM_SOLOGIMBAL_ENABLED
     if (gimbal != nullptr) {
-        gimbal->update();
+        gimbal->update(*sitl_model);
     }
 #endif
 #if HAL_SIM_ADSB_ENABLED

@@ -130,8 +130,11 @@ void RC_Channel_Rover::do_aux_function_sailboat_motor_3pos(const AuxSwitchPos ch
     }
 }
 
-bool RC_Channel_Rover::do_aux_function(const AUX_FUNC ch_option, const AuxSwitchPos ch_flag)
+bool RC_Channel_Rover::do_aux_function(const AuxFuncTrigger &trigger)
 {
+    const AUX_FUNC &ch_option = trigger.func;
+    const AuxSwitchPos &ch_flag = trigger.pos;
+
     switch (ch_option) {
     case AUX_FUNC::DO_NOTHING:
         break;
@@ -215,7 +218,7 @@ bool RC_Channel_Rover::do_aux_function(const AUX_FUNC ch_option, const AuxSwitch
         do_aux_function_change_mode(rover.mode_loiter, ch_flag);
         break;
 
-#if MODE_FOLLOW_ENABLED == ENABLED
+#if MODE_FOLLOW_ENABLED
     // Set mode to Follow
     case AUX_FUNC::FOLLOW:
         do_aux_function_change_mode(rover.mode_follow, ch_flag);
@@ -261,7 +264,7 @@ bool RC_Channel_Rover::do_aux_function(const AUX_FUNC ch_option, const AuxSwitch
         break;
 
     default:
-        return RC_Channel::do_aux_function(ch_option, ch_flag);
+        return RC_Channel::do_aux_function(trigger);
 
     }
 

@@ -4,6 +4,10 @@
 
 #define HAL_BOARD_NAME "ChibiOS"
 
+#ifdef HAL_HAVE_PIXRACER_LED
+#error "use AP_NOTIFY_GPIO_LED_RGB_ENABLED in place of HAL_HAVE_PIXRACER_LED (and rename your pins!)"
+#endif
+
 #if HAL_MEMORY_TOTAL_KB >= 1000
 #define HAL_MEM_CLASS HAL_MEM_CLASS_1000
 #elif HAL_MEMORY_TOTAL_KB >= 500
@@ -136,3 +140,9 @@
 #endif
 #define HAL_USE_QUADSPI (HAL_USE_QUADSPI1 || HAL_USE_QUADSPI2)
 #define HAL_USE_OCTOSPI (HAL_USE_OCTOSPI1 || HAL_USE_OCTOSPI2)
+
+#if defined(STM32H7) || defined(STM32F7)
+#define HAL_INS_RATE_LOOP 1
+#else
+#define HAL_INS_RATE_LOOP 0
+#endif

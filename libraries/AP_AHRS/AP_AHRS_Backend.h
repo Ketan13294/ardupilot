@@ -25,6 +25,7 @@
 #include <AP_Airspeed/AP_Airspeed.h>
 #include <AP_InertialSensor/AP_InertialSensor.h>
 #include <AP_Common/Location.h>
+#include <AP_NavEKF/AP_NavEKF_Source.h>
 
 #define AP_AHRS_TRIM_LIMIT 10.0f        // maximum trim angle in degrees
 #define AP_AHRS_RP_P_MIN   0.05f        // minimum value for AHRS_RP_P parameter
@@ -77,7 +78,7 @@ public:
     // get the index of the current primary accelerometer sensor
     virtual uint8_t get_primary_accel_index(void) const {
 #if AP_INERTIALSENSOR_ENABLED
-        return AP::ins().get_primary_accel();
+        return AP::ins().get_first_usable_accel();
 #else
         return 0;
 #endif
@@ -86,7 +87,7 @@ public:
     // get the index of the current primary gyro sensor
     virtual uint8_t get_primary_gyro_index(void) const {
 #if AP_INERTIALSENSOR_ENABLED
-        return AP::ins().get_primary_gyro();
+        return AP::ins().get_first_usable_gyro();
 #else
         return 0;
 #endif
@@ -117,7 +118,7 @@ public:
     virtual void request_yaw_reset(void) {}
 
     // set position, velocity and yaw sources to either 0=primary, 1=secondary, 2=tertiary
-    virtual void set_posvelyaw_source_set(uint8_t source_set_idx) {}
+    virtual void set_posvelyaw_source_set(AP_NavEKF_Source::SourceSetSelection source_set_idx) {}
 
     // reset the current gyro drift estimate
     //  should be called if gyro offsets are recalculated
@@ -134,13 +135,13 @@ public:
 
     // return an airspeed estimate if available. return true
     // if we have an estimate
-    virtual bool airspeed_estimate(float &airspeed_ret) const WARN_IF_UNUSED { return false; }
-    virtual bool airspeed_estimate(uint8_t airspeed_index, float &airspeed_ret) const { return false; }
+    virtual bool airspeed_EAS(float &airspeed_ret) const WARN_IF_UNUSED { return false; }
+    virtual bool airspeed_EAS(uint8_t airspeed_index, float &airspeed_ret) const { return false; }
 
     // return a true airspeed estimate (navigation airspeed) if
     // available. return true if we have an estimate
-    bool airspeed_estimate_true(float &airspeed_ret) const WARN_IF_UNUSED {
-        if (!airspeed_estimate(airspeed_ret)) {
+    bool airspeed_TAS(float &airspeed_ret) const WARN_IF_UNUSED {
+        if (!airspeed_EAS(airspeed_ret)) {
             return false;
         }
         airspeed_ret *= get_EAS2TAS();
@@ -155,6 +156,7 @@ public:
 
     // get apparent to true airspeed ratio
     static float get_EAS2TAS(void);
+    static float get_TAS2EAS(void) { return 1.0/get_EAS2TAS(); }
 
     // return true if airspeed comes from an airspeed sensor, as
     // opposed to an IMU estimate

@@ -1,8 +1,10 @@
+#include "AP_Mount_config.h"
+
+#if HAL_MOUNT_ENABLED
+
 #include <AP_Common/AP_Common.h>
 #include <AP_Param/AP_Param.h>
 #include "AP_Mount.h"
-
-#if HAL_MOUNT_ENABLED
 
 #include "AP_Mount_Backend.h"
 #include "AP_Mount_Servo.h"
@@ -15,6 +17,7 @@
 #include "AP_Mount_Scripting.h"
 #include "AP_Mount_Xacti.h"
 #include "AP_Mount_Viewpro.h"
+#include "AP_Mount_Topotek.h"
 #include <stdio.h>
 #include <AP_Math/location.h>
 #include <SRV_Channel/SRV_Channel.h>
@@ -45,7 +48,7 @@ AP_Mount::AP_Mount()
     }
     _singleton = this;
 
-	AP_Param::setup_object_defaults(this, var_info);
+    AP_Param::setup_object_defaults(this, var_info);
 }
 
 // init - detect and initialise all mounts
@@ -156,6 +159,15 @@ void AP_Mount::init()
             serial_instance++;
             break;
 #endif // HAL_MOUNT_VIEWPRO_ENABLED
+
+#if HAL_MOUNT_TOPOTEK_ENABLED
+        // check for Topotek gimbal
+        case Type::Topotek:
+            _backends[instance] = NEW_NOTHROW AP_Mount_Topotek(*this, _params[instance], instance, serial_instance);
+            _num_instances++;
+            serial_instance++;
+            break;
+#endif // HAL_MOUNT_TOPOTEK_ENABLED
         }
 
         // init new instance
@@ -174,6 +186,8 @@ void AP_Mount::init()
             set_mode_to_default(instance);
         }
     }
+
+    (void)serial_instance;
 }
 
 // update - give mount opportunity to update servos.  should be called at 10hz or higher
@@ -641,18 +655,25 @@ bool AP_Mount::get_poi(uint8_t instance, Quaternion &quat, Location &loc, Locati
 }
 #endif
 
-// get mount's current attitude in euler angles in degrees.  yaw angle is in body-frame
-// returns true on success
-bool AP_Mount::get_attitude_euler(uint8_t instance, float& roll_deg, float& pitch_deg, float& yaw_bf_deg)
+// get attitude as a quaternion.  returns true on success.
+// att_quat will be an earth-frame quaternion rotated such that
+// yaw is in body-frame.
+bool AP_Mount::get_attitude_quaternion(uint8_t instance, Quaternion& att_quat)
 {
     auto *backend = get_instance(instance);
     if (backend == nullptr) {
         return false;
     }
+    return backend->get_attitude_quaternion(att_quat);
+}
 
+// get mount's current attitude in euler angles in degrees.  yaw angle is in body-frame
+// returns true on success
+bool AP_Mount::get_attitude_euler(uint8_t instance, float& roll_deg, float& pitch_deg, float& yaw_bf_deg)
+{
     // re-use get_attitude_quaternion and convert to Euler angles
     Quaternion att_quat;
-    if (!backend->get_attitude_quaternion(att_quat)) {
+    if (!get_attitude_quaternion(instance, att_quat)) {
         return false;
     }
 
@@ -893,6 +914,29 @@ void AP_Mount::send_camera_capture_status(uint8_t instance, mavlink_channel_t ch
         return;
     }
     backend->send_camera_capture_status(chan);
+}
+
+#if AP_MOUNT_SEND_THERMAL_RANGE_ENABLED
+// send camera thermal range message to GCS
+void AP_Mount::send_camera_thermal_range(uint8_t instance, mavlink_channel_t chan) const
+{
+    auto *backend = get_instance(instance);
+    if (backend == nullptr) {
+        return;
+    }
+    backend->send_camera_thermal_range(chan);
+}
+#endif
+
+// change camera settings not normally used by autopilot
+// setting values from AP_Camera::Setting enum
+bool AP_Mount::change_setting(uint8_t instance, CameraSetting setting, float value)
+{
+    auto *backend = get_instance(instance);
+    if (backend == nullptr) {
+        return false;
+    }
+    return backend->change_setting(setting, value);
 }
 
 // get rangefinder distance.  Returns true on success
